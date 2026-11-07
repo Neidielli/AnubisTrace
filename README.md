@@ -92,6 +92,13 @@ python -m anubistrace.cli scan -i /path/to/artifacts --min-severity HIGH
 python -m anubistrace.cli live --output D:\ForensicEvidence
 ```
 
+### 3. Build Standalone USB Portable Executable (Field Mode)
+
+```bash
+# Compiles a standalone single-binary (anubis.exe / anubis) without Python requirement
+python anubistrace/triage/build_portable.py
+```
+
 ---
 
 ## 🗺️ Project Roadmap
@@ -117,9 +124,11 @@ python -m anubistrace.cli live --output D:\ForensicEvidence
   - [x] MITRE ATT&CK tactics & techniques visual breakdown
   - [x] Dedicated cards for multi-stage correlated attack chains
   - [x] Eric Zimmerman's Timeline Explorer compatible CSV & SIEM-ready JSONL export
-- [ ] **Phase 5: Standalone USB Executable (Pendrive Mode)**
-  - [ ] Single binary compilation via PyInstaller
-  - [ ] Zero-touch live artifact collector script
+- [x] **Phase 5: Standalone USB Executable & Live Triage (Pendrive Mode)**
+  - [x] Automated live triage collector for Windows and Linux (`collector.py`)
+  - [x] SHA-256 evidence hashing & automated chain-of-custody manifest (`evidence_manifest.json`)
+  - [x] Non-destructive volatile data extraction (sockets, process tree, sessions)
+  - [x] Standalone single-file binary builder (`build_portable.py`) via PyInstaller
 
 ---
 

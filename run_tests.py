@@ -30,6 +30,7 @@ from tests.test_engine import (
     test_temporal_antiforensics_correlation,
 )
 from tests.test_reporters import test_reporters_full_cycle
+from tests.test_triage import test_calculate_sha256, test_live_collector_manifest_structure
 
 TEST_FUNCTIONS = [
     test_severity_ordering,
@@ -46,11 +47,13 @@ TEST_FUNCTIONS = [
     test_temporal_bruteforce_correlation,
     test_temporal_antiforensics_correlation,
     test_reporters_full_cycle,
+    test_calculate_sha256,
+    test_live_collector_manifest_structure,
 ]
 
 def run_all() -> int:
     print("=" * 65)
-    print("  AnubisTrace - Full Forensic & Visualization Test Suite")
+    print("  AnubisTrace - Full Complete Test Suite (16 Automated Tests)")
     print("=" * 65)
 
     passed = 0
