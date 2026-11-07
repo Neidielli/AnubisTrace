@@ -29,6 +29,7 @@ from tests.test_engine import (
     test_temporal_bruteforce_correlation,
     test_temporal_antiforensics_correlation,
 )
+from tests.test_reporters import test_reporters_full_cycle
 
 TEST_FUNCTIONS = [
     test_severity_ordering,
@@ -44,11 +45,12 @@ TEST_FUNCTIONS = [
     test_rule_matching_and_enrichment,
     test_temporal_bruteforce_correlation,
     test_temporal_antiforensics_correlation,
+    test_reporters_full_cycle,
 ]
 
 def run_all() -> int:
     print("=" * 65)
-    print("  AnubisTrace - Full Forensic & Correlation Test Suite")
+    print("  AnubisTrace - Full Forensic & Visualization Test Suite")
     print("=" * 65)
 
     passed = 0

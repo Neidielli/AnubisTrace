@@ -111,10 +111,12 @@ python -m anubistrace.cli live --output D:\ForensicEvidence
   - [x] Attack chain detection: Brute-Force into success, Anti-forensics / log purging, Ingress download into execution, Ransomware recovery inhibition
   - [x] Declarative Sigma-style YAML detection rules loader (`rules_loader.py`)
   - [x] Pre-packaged attack rules in `rules/`
-- [ ] **Phase 4: Reporting & Interactive Dashboard**
-  - [ ] Rich CLI Terminal with animated progress and alert badges
-  - [ ] Standalone HTML dashboard with timeline graphs
-  - [ ] Eric Zimmerman's Timeline Explorer compatible CSV export
+- [x] **Phase 4: Reporting & Interactive Dashboard**
+  - [x] Standalone 100% air-gapped HTML dashboard (`report.html`) with embedded vanilla JS & CSS
+  - [x] Interactive Super Timeline table with instantaneous live search and severity filtering
+  - [x] MITRE ATT&CK tactics & techniques visual breakdown
+  - [x] Dedicated cards for multi-stage correlated attack chains
+  - [x] Eric Zimmerman's Timeline Explorer compatible CSV & SIEM-ready JSONL export
 - [ ] **Phase 5: Standalone USB Executable (Pendrive Mode)**
   - [ ] Single binary compilation via PyInstaller
   - [ ] Zero-touch live artifact collector script

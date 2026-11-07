@@ -22,6 +22,7 @@ from anubistrace.parsers import get_all_parsers
 from anubistrace.reporters import (
     export_to_csv,
     export_to_jsonl,
+    generate_html_report,
     render_terminal_report,
 )
 from anubistrace.reporters.terminal import render_attack_chains
@@ -74,7 +75,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     scan_parser.add_argument(
         "--format",
-        choices=["terminal", "csv", "jsonl", "all"],
+        choices=["terminal", "csv", "jsonl", "html", "all"],
         default="all",
         help="Output report formats (default: all)",
     )
@@ -167,6 +168,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             jsonl_path = out_dir / "timeline.jsonl"
             export_to_jsonl(filtered_events, jsonl_path)
             print(f"[✓] SIEM-ready JSONL stream exported to: {jsonl_path.resolve()}")
+
+        if args.format in ("html", "all"):
+            html_path = out_dir / "report.html"
+            generate_html_report(filtered_events, stats, attack_chains, html_path)
+            print(f"[✓] Interactive HTML Dashboard exported to: {html_path.resolve()}")
 
         return 0
 
