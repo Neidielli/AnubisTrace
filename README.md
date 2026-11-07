@@ -101,14 +101,15 @@ python -m anubistrace.cli live --output D:\ForensicEvidence
   - [x] MITRE ATT&CK Enrichment Engine (`mitre.py`)
   - [x] Chronological Super Timeline Engine (`timeline.py`)
   - [x] Abstract Parser Interface (`base.py`)
-- [ ] **Phase 2: High-Performance Artifact Parsers**
-  - [ ] Windows EVTX Parser (Process creation 4688, Logons 4624/4625, Log clearing 1102)
-  - [ ] Prefetch (`.pf`) Execution Parser
-  - [ ] Linux Auth / Syslog Parser
+- [x] **Phase 2: High-Performance Artifact Parsers**
+  - [x] Windows EVTX Parser (Process creation 4688, Logons 4624/4625, Log clearing 1102, Services 7045)
+  - [x] Windows Prefetch (`.pf`) Execution Parser
+  - [x] Linux Auth & History Parser (SSH brute force, sudo abuse, bash commands)
+  - [x] Realistic forensic artifact samples in `samples/`
 - [ ] **Phase 3: Threat Detection & Correlation Rules**
-  - [ ] Brute-force into successful logon correlation
-  - [ ] Ransomware shadow copy deletion detection
-  - [ ] Encoded PowerShell & download cradle alerts
+  - [ ] Multi-event correlation engine (e.g. Brute Force -> Successful Logon -> LOLBin Execution -> Log Clear)
+  - [ ] YAML-based Sigma-style detection rules
+  - [ ] Automated incident hypothesis generator
 - [ ] **Phase 4: Reporting & Interactive Dashboard**
   - [ ] Rich CLI Terminal with animated progress and alert badges
   - [ ] Standalone HTML dashboard with timeline graphs

@@ -1,0 +1,6 @@
+Nov  7 04:00:12 ubuntu sshd[4101]: Failed password for invalid user admin from 203.0.113.55 port 49152 ssh2
+Nov  7 04:00:15 ubuntu sshd[4102]: Failed password for invalid user root from 203.0.113.55 port 49153 ssh2
+Nov  7 04:00:18 ubuntu sshd[4103]: Failed password for invalid user test from 203.0.113.55 port 49154 ssh2
+Nov  7 04:01:45 ubuntu sshd[4120]: Accepted publickey for neidi from 203.0.113.55 port 49160 ssh2
+Nov  7 04:02:10 ubuntu sudo:   neidi : TTY=pts/0 ; PWD=/home/neidi ; USER=root ; COMMAND=/bin/bash
+Nov  7 04:03:00 ubuntu useradd[4150]: new user: name=ghost_admin, UID=1005, GID=1005, home=/home/ghost_admin, shell=/bin/bash

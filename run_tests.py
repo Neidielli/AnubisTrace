@@ -18,6 +18,11 @@ from tests.test_mitre import (
     test_encoded_powershell_detection,
 )
 from tests.test_timeline import test_timeline_sorting_and_filtering
+from tests.test_parsers import (
+    test_evtx_xml_parser,
+    test_linux_auth_parser,
+    test_linux_bash_history_parser,
+)
 
 TEST_FUNCTIONS = [
     test_severity_ordering,
@@ -26,11 +31,14 @@ TEST_FUNCTIONS = [
     test_mitre_lolbin_and_command_pattern,
     test_encoded_powershell_detection,
     test_timeline_sorting_and_filtering,
+    test_evtx_xml_parser,
+    test_linux_auth_parser,
+    test_linux_bash_history_parser,
 ]
 
 def run_all() -> int:
     print("=" * 60)
-    print("  AnubisTrace - Test Suite Execution")
+    print("  AnubisTrace - Full Forensic Test Suite")
     print("=" * 60)
 
     passed = 0
