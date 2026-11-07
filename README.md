@@ -69,6 +69,46 @@ flowchart TD
 
 ---
 
+## ⚖️ Forensic Methodology & Legal Standards
+
+AnubisTrace was engineered in strict compliance with international digital forensics standards, legal admissibility requirements, and modern Incident Response (DFIR) methodologies.
+
+### Operational Modes: Offline Analysis vs. Live Triage
+
+```mermaid
+flowchart TD
+    subgraph Mode1["Mode 1: Offline / Dead-Disk Forensics (anubistrace scan)"]
+        A["Disk Image / E01 / Extracted Folder<br/>(e.g., KAPE, FTK Imager, Read-Only Mount)"] --> B["AnubisTrace ingests offline files"]
+        B --> C["Super Timeline & Dashboard Generated"]
+    end
+
+    subgraph Mode2["Mode 2: Live Triage on Hot Machine (anubistrace live)"]
+        D["Suspect Endpoint (Live/Running)"] -->|1. Non-destructive Targeted Copy| E["External Storage / USB Triage Bag"]
+        E -->|2. Cryptographic Hashing| F["evidence_manifest.json (SHA-256)"]
+        E -->|3. Processing & Analysis| G["Engine analyzes ONLY the extracted copy"]
+        G --> H["timeline.csv & report.html"]
+    end
+```
+
+### Theoretical & Legal Frameworks
+
+1. **RFC 3227 — Guidelines for Evidence Collection and Archiving:**
+   - **Order of Volatility Preservation:** When handling live endpoints, AnubisTrace prioritizes volatile artifacts (active network sockets, process tree, DNS cache, logged-in sessions) *before* extracting on-disk records.
+   - **Non-Destructive Execution:** The live triage mechanism never runs analytics in-place on host system files; it extracts targeted evidence to external storage to avoid evidence contamination.
+
+2. **ISO/IEC 27037:2012 — Guidelines for Identification, Collection, Acquisition, and Preservation of Digital Evidence:**
+   - **Principle of Relevance & Sufficiency:** Implements *Targeted Triage*—extracting the high-value 2% of OS artifacts containing 98% of actionable breach evidence (EVTX, Prefetch, Registry, auth.log) in minutes, crucial for rapid containment of active ransomware or C2 activity.
+   - **Integrity & Repeatability:** Every single file extracted by AnubisTrace is cryptographically hashed with **SHA-256** at acquisition time, generating an immutable manifest for forensic repeatability in judicial proceedings.
+
+3. **NIST SP 800-86 — Guide to Integrating Forensic Techniques into Incident Response:**
+   - Directly maps to the 4 core phases: *Collection, Examination, Analysis, and Reporting*.
+   - Separates acquisition from correlation: analytical queries and heuristic scoring run strictly on the exported copy.
+
+4. **Forensic Chain of Custody (Cadeia de Custódia):**
+   - Automatically generates `evidence_manifest.json` containing collector analyst identity, target hostname, OS kernel/build, UTC start/end timestamps, and file-level SHA-256 checksums to meet court admissibility and audit requirements.
+
+---
+
 ## ⚡ Quick Start
 
 ### 1. Clone & Setup
