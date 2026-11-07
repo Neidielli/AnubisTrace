@@ -1,0 +1,20 @@
+id: anubis-rule-004
+title: Linux Sudo Privilege Escalation
+description: Detects user elevating privileges to root via sudo command in Linux environments.
+status: stable
+author: Neidielli Rosado
+severity: HIGH
+mitre:
+  tactic: Privilege Escalation
+  technique_id: T1548.003
+  technique_name: "Abuse Elevation Control Mechanism: Sudo and Sudo Caching"
+detection:
+  condition: selection
+  selection:
+    event_id:
+      - "LINUX_SUDO_EXEC"
+    target: "root"
+tags:
+  - attack.privilege_escalation
+  - attack.t1548.003
+  - linux.sudo

@@ -1,0 +1,20 @@
+id: anubis-rule-001
+title: Windows Security Audit Log Cleared
+description: Detects when the Windows Security or System audit log is cleared by an administrator or threat actor.
+status: stable
+author: Neidielli Rosado
+severity: CRITICAL
+mitre:
+  tactic: Defense Evasion
+  technique_id: T1070.001
+  technique_name: "Indicator Removal: Clear Windows Event Logs"
+detection:
+  condition: selection
+  selection:
+    event_id:
+      - "1102"
+      - "104"
+tags:
+  - attack.defense_evasion
+  - attack.t1070.001
+  - windows.eventlog

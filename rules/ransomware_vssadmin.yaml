@@ -1,0 +1,23 @@
+id: anubis-rule-002
+title: Volume Shadow Copy Deletion via LOLBin
+description: Detects deletion of Windows volume shadow copies typically used by ransomware prior to file encryption.
+status: stable
+author: Neidielli Rosado
+severity: CRITICAL
+mitre:
+  tactic: Impact
+  technique_id: T1490
+  technique_name: "Inhibit System Recovery"
+detection:
+  condition: selection
+  selection:
+    command_line_contains:
+      - "delete shadows"
+      - "shadowcopy delete"
+      - "delete catalog"
+      - "resize shadowstorage"
+tags:
+  - attack.impact
+  - attack.t1490
+  - ransomware
+  - lolbin.vssadmin

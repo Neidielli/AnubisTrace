@@ -106,10 +106,11 @@ python -m anubistrace.cli live --output D:\ForensicEvidence
   - [x] Windows Prefetch (`.pf`) Execution Parser
   - [x] Linux Auth & History Parser (SSH brute force, sudo abuse, bash commands)
   - [x] Realistic forensic artifact samples in `samples/`
-- [ ] **Phase 3: Threat Detection & Correlation Rules**
-  - [ ] Multi-event correlation engine (e.g. Brute Force -> Successful Logon -> LOLBin Execution -> Log Clear)
-  - [ ] YAML-based Sigma-style detection rules
-  - [ ] Automated incident hypothesis generator
+- [x] **Phase 3: Threat Detection & Temporal Correlation Engine**
+  - [x] Multi-event sliding-window temporal correlation engine (`correlation.py`)
+  - [x] Attack chain detection: Brute-Force into success, Anti-forensics / log purging, Ingress download into execution, Ransomware recovery inhibition
+  - [x] Declarative Sigma-style YAML detection rules loader (`rules_loader.py`)
+  - [x] Pre-packaged attack rules in `rules/`
 - [ ] **Phase 4: Reporting & Interactive Dashboard**
   - [ ] Rich CLI Terminal with animated progress and alert badges
   - [ ] Standalone HTML dashboard with timeline graphs

@@ -13,8 +13,18 @@ from typing import List, Optional
 from anubistrace import __app_name__, __version__
 from anubistrace.core.event import Severity
 from anubistrace.core.timeline import TimelineEngine
+from anubistrace.engine import (
+    TemporalCorrelationEngine,
+    apply_rules,
+    load_rules_from_directory,
+)
 from anubistrace.parsers import get_all_parsers
-from anubistrace.reporters import export_to_csv, export_to_jsonl, render_terminal_report
+from anubistrace.reporters import (
+    export_to_csv,
+    export_to_jsonl,
+    render_terminal_report,
+)
+from anubistrace.reporters.terminal import render_attack_chains
 
 
 def print_banner() -> None:
@@ -52,6 +62,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     scan_parser.add_argument(
         "-o", "--output", default="output", help="Output directory for generated reports (default: output)"
+    )
+    scan_parser.add_argument(
+        "--rules", default="rules", help="Directory containing custom YAML detection rules (default: rules)"
     )
     scan_parser.add_argument(
         "--min-severity",
@@ -98,7 +111,6 @@ def main(argv: Optional[List[str]] = None) -> int:
         else:
             files_to_scan.extend([p for p in input_path.rglob("*") if p.is_file()])
 
-        processed_count = 0
         for f in files_to_scan:
             for p in parsers:
                 if p.can_parse(f):
@@ -107,13 +119,33 @@ def main(argv: Optional[List[str]] = None) -> int:
                         timeline.add_events(events)
                         if events:
                             print(f"  [+] Ingested {len(events):>4} events from {f.name:<25} via {p.name}")
-                            processed_count += 1
                     except Exception as err:
                         print(f"  [-] Error in parser {p.name} on {f.name}: {err}", file=sys.stderr)
 
         if len(timeline) == 0:
             print("[!] No supported forensic events were detected in the target path.")
             return 0
+
+        # Load & Apply Detection Rules
+        rules_dir = Path(args.rules)
+        detection_rules = load_rules_from_directory(rules_dir)
+        rule_hits = 0
+        for event in timeline.events:
+            matches = apply_rules(event, detection_rules)
+            rule_hits += len(matches)
+
+        print(f"[*] Evaluated {len(detection_rules)} detection rules ({rule_hits} rule hits applied)")
+
+        # Run Temporal Correlation
+        correlator = TemporalCorrelationEngine(time_window_minutes=30)
+        attack_chains = correlator.correlate(timeline.events)
+
+        if attack_chains:
+            print(f"[!] 🚨 Correlation Engine identified {len(attack_chains)} active multi-stage attack chains!")
+            render_attack_chains(attack_chains)
+            # Inject synthetic attack chain events into timeline
+            for chain in attack_chains:
+                timeline.add_event(chain.to_forensic_event())
 
         # Filter by requested severity
         min_sev = Severity(args.min_severity)

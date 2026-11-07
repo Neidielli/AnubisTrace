@@ -23,6 +23,12 @@ from tests.test_parsers import (
     test_linux_auth_parser,
     test_linux_bash_history_parser,
 )
+from tests.test_engine import (
+    test_yaml_rules_loading,
+    test_rule_matching_and_enrichment,
+    test_temporal_bruteforce_correlation,
+    test_temporal_antiforensics_correlation,
+)
 
 TEST_FUNCTIONS = [
     test_severity_ordering,
@@ -34,12 +40,16 @@ TEST_FUNCTIONS = [
     test_evtx_xml_parser,
     test_linux_auth_parser,
     test_linux_bash_history_parser,
+    test_yaml_rules_loading,
+    test_rule_matching_and_enrichment,
+    test_temporal_bruteforce_correlation,
+    test_temporal_antiforensics_correlation,
 ]
 
 def run_all() -> int:
-    print("=" * 60)
-    print("  AnubisTrace - Full Forensic Test Suite")
-    print("=" * 60)
+    print("=" * 65)
+    print("  AnubisTrace - Full Forensic & Correlation Test Suite")
+    print("=" * 65)
 
     passed = 0
     failed = 0
@@ -55,9 +65,9 @@ def run_all() -> int:
             traceback.print_exc()
             failed += 1
 
-    print("-" * 60)
+    print("-" * 65)
     print(f"Summary: {passed} passed, {failed} failed.")
-    print("=" * 60)
+    print("=" * 65)
 
     return 0 if failed == 0 else 1
 

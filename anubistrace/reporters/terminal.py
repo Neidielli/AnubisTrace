@@ -6,9 +6,12 @@ Renders interactive, color-coded incident reports with rich or pure ASCII fallba
 from __future__ import annotations
 
 import sys
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 from anubistrace.core.event import ForensicEvent, Severity
+
+if TYPE_CHECKING:
+    from anubistrace.engine.correlation import CorrelatedFinding
 
 # ANSI Color Codes for terminal
 RESET = "\033[0m"
@@ -29,9 +32,47 @@ SEVERITY_COLORS = {
 }
 
 
+def render_attack_chains(findings: List[CorrelatedFinding]) -> None:
+    """Renders correlated multi-stage attack chains."""
+    if not findings:
+        return
+
+    try:
+        from rich.console import Console
+        from rich.panel import Panel
+
+        console = Console()
+        console.print("\n[bold red]🚨 MULTI-STAGE CORRELATED ATTACK SEQUENCES DETECTED[/bold red]\n")
+
+        for i, f in enumerate(findings, 1):
+            body = (
+                f"[bold red]Severity:[/bold red] {f.severity.value}\n"
+                f"[bold]Description:[/bold] {f.description}\n"
+                f"[bold]MITRE Tactics:[/bold] {', '.join(f.mitre_tactics)}\n"
+                f"[bold]MITRE Techniques:[/bold] {', '.join(f.mitre_techniques)}\n"
+                f"[bold]Contributing Artifacts:[/bold] {len(f.contributing_events)} event(s) across "
+                f"{(f.last_seen - f.first_seen).total_seconds():.1f}s"
+            )
+            console.print(Panel(body, title=f"[bold yellow]Chain #{i}: {f.title}[/bold yellow]", border_style="red"))
+        return
+    except ImportError:
+        pass
+
+    # Pure ASCII Fallback
+    print("\n" + "!" * 80)
+    print("  🚨 MULTI-STAGE CORRELATED ATTACK SEQUENCES DETECTED")
+    print("!" * 80)
+    for i, f in enumerate(findings, 1):
+        print(f"\n[Chain #{i}] {f.title} (Severity: {f.severity.value})")
+        print(f"  Description: {f.description}")
+        print(f"  Tactics:     {', '.join(f.mitre_tactics)}")
+        print(f"  Techniques:  {', '.join(f.mitre_techniques)}")
+        print(f"  Evidences:   {len(f.contributing_events)} event(s)")
+    print("!" * 80 + "\n")
+
+
 def render_terminal_report(events: List[ForensicEvent], stats: Dict[str, object]) -> None:
     """Renders formatted incident summary and chronological timeline to stdout."""
-    # Attempt to render with rich if available
     try:
         from rich.console import Console
         from rich.panel import Panel

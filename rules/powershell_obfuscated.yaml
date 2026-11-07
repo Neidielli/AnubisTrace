@@ -1,0 +1,19 @@
+id: anubis-rule-003
+title: Obfuscated or Base64 Encoded PowerShell Command
+description: Detects command-line execution of PowerShell with Base64 encoded flags (-enc, -encodedcommand).
+status: stable
+author: Neidielli Rosado
+severity: HIGH
+mitre:
+  tactic: Defense Evasion
+  technique_id: T1027
+  technique_name: "Obfuscated Files or Information"
+detection:
+  condition: selection
+  selection:
+    command_line_regex: "powershell.*(-e|-enc|-encodedcommand)\\s+[A-Za-z0-9+/=]{10,}"
+tags:
+  - attack.defense_evasion
+  - attack.execution
+  - attack.t1027
+  - attack.t1059.001
