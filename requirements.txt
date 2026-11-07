@@ -1,0 +1,12 @@
+# Core dependencies
+python-evtx>=0.7.4
+rich>=13.7.0
+typer>=0.9.0
+jinja2>=3.1.2
+pyyaml>=6.0.1
+
+# Optional & Standalone packaging
+pyinstaller>=6.3.0
+
+# Testing & Quality
+pytest>=8.0.0

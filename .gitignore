@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Forensic dumps & test artifacts (keep raw huge files out of git)
+*.raw
+*.dd
+*.vmdk
+*.mem
+*.dmp
+*.iso

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "anubistrace"
+version = "0.1.0"
+description = "Lightweight Incident Triage & Forensic Super Timeline Engine mapped to MITRE ATT&CK"
+readme = "README.md"
+authors = [{ name = "Neidielli Rosado", email = "neidalves23@gmail.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = [
+    "python-evtx>=0.7.4",
+    "rich>=13.7.0",
+    "typer>=0.9.0",
+    "jinja2>=3.1.2",
+    "pyyaml>=6.0.1",
+]
+
+[project.scripts]
+anubis = "anubistrace.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/Neidielli/AnubisTrace"
+Repository = "https://github.com/Neidielli/AnubisTrace.git"
