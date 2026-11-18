@@ -6,7 +6,12 @@ Supports both rich interactive terminal UI and zero-dependency fallback.
 from __future__ import annotations
 
 import argparse
+import ctypes
+import os
+import platform
+import socket
 import sys
+import webbrowser
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -154,6 +159,147 @@ def execute_scan(
     return 0
 
 
+def _get_base_dir() -> Path:
+    """
+    Returns the directory containing the executable when frozen (e.g. USB drive),
+    so 'Run as Administrator' does not default to C:\\Windows\\System32.
+    """
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path.cwd()
+
+
+def _is_admin() -> bool:
+    """Checks if the process has administrative / root privileges."""
+    if platform.system().lower() == "windows":
+        try:
+            return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        except Exception:
+            return False
+    return hasattr(os, "geteuid") and os.geteuid() == 0
+
+
+def _pause(message: str = "\nPressione ENTER para voltar ao menu...") -> None:
+    """Waits for Enter safely without crashing if stdin is closed."""
+    try:
+        input(message)
+    except (KeyboardInterrupt, EOFError):
+        pass
+
+
+def _maybe_open_report(report_path: Path) -> None:
+    """Offers to open the generated HTML dashboard in the default browser."""
+    if not report_path.exists():
+        return
+    try:
+        answer = input(f"\n[?] Deseja abrir o Dashboard HTML ({report_path.name}) no navegador? [S/n]: ").strip().lower()
+        if answer in ("", "s", "sim", "y", "yes"):
+            webbrowser.open(report_path.resolve().as_uri())
+            print("[✓] Dashboard aberto no navegador.")
+    except Exception as err:
+        print(f"[!] Nao foi possivel abrir o navegador automaticamente: {err}")
+
+
+def run_interactive_menu(parser: argparse.ArgumentParser) -> int:
+    """Interactive menu when launched via double-click or without arguments."""
+    base_dir = _get_base_dir()
+    rules_dir = _resolve_rules_dir(str(base_dir / "rules"))
+
+    while True:
+        print_banner()
+        is_admin = _is_admin()
+        priv_status = "ADMINISTRADOR [OK]" if is_admin else "USUARIO PADRAO (execute como Admin para coleta completa de EVTX/Prefetch)"
+
+        print(f"  Host Atual   : {socket.gethostname()} ({platform.system()} {platform.release()})")
+        print(f"  Diretorio    : {base_dir}")
+        print(f"  Privilegios  : {priv_status}")
+        print("  " + "=" * 65)
+        print("  [1] Live Triage   - Coletar evidencias desta maquina e analisar")
+        print("  [2] Scan Offline  - Analisar pasta ou arquivo forense existente")
+        print("  [3] Ajuda CLI     - Exibir opcoes de linha de comando")
+        print("  [0] Sair")
+        print("  " + "=" * 65)
+
+        try:
+            choice = input("\n  Escolha uma opcao [0-3]: ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\n[*] Encerrando AnubisTrace.")
+            return 0
+
+        if choice == "0":
+            print("\n[*] Encerrando AnubisTrace.")
+            return 0
+
+        elif choice == "1":
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            default_out = base_dir / "Casos_Evidencias" / f"Incidente_{socket.gethostname()}_{timestamp}"
+            try:
+                custom_out = input(f"\n  Pasta de destino [Enter para padrao: {default_out}]: ").strip().strip('"').strip("'")
+                out_path = Path(custom_out) if custom_out else default_out
+
+                collector = LiveCollector(out_path)
+                collector.run_triage()
+
+                print("\n[*] Iniciando analise automatica dos artefatos coletados...")
+                analysis_dir = out_path / "analysis"
+                execute_scan(
+                    input_path=out_path,
+                    output_dir=analysis_dir,
+                    rules_dir=rules_dir,
+                    min_severity="INFO",
+                    output_format="all",
+                )
+                _maybe_open_report(analysis_dir / "report.html")
+            except Exception as err:
+                print(f"\n[ERROR] Falha durante a triagem ao vivo: {err}")
+
+            _pause()
+
+        elif choice == "2":
+            try:
+                raw_input = input("\n  Caminho da pasta ou arquivo de evidencias (pode arrastar aqui): ").strip().strip('"').strip("'")
+                if not raw_input:
+                    print("[!] Nenhum caminho informado.")
+                    _pause()
+                    continue
+
+                input_path = Path(raw_input)
+                if not input_path.exists():
+                    print(f"[ERROR] Caminho nao encontrado: {input_path}")
+                    _pause()
+                    continue
+
+                sev_raw = input("  Severidade minima (INFO/LOW/MEDIUM/HIGH/CRITICAL) [Enter = INFO]: ").strip().upper()
+                min_sev = sev_raw if sev_raw in ("INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL") else "INFO"
+
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                default_out = base_dir / "Casos_Evidencias" / f"Scan_{timestamp}"
+                custom_out = input(f"  Pasta de saida dos relatorios [Enter para padrao: {default_out}]: ").strip().strip('"').strip("'")
+                out_path = Path(custom_out) if custom_out else default_out
+
+                execute_scan(
+                    input_path=input_path,
+                    output_dir=out_path,
+                    rules_dir=rules_dir,
+                    min_severity=min_sev,
+                    output_format="all",
+                )
+                _maybe_open_report(out_path / "report.html")
+            except Exception as err:
+                print(f"\n[ERROR] Falha durante o scan offline: {err}")
+
+            _pause()
+
+        elif choice == "3":
+            print()
+            parser.print_help()
+            _pause()
+
+        else:
+            print("\n[!] Opcao invalida. Escolha 0, 1, 2 ou 3.")
+            _pause("Pressione ENTER para continuar...")
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     _configure_console_encoding()
     parser = argparse.ArgumentParser(
@@ -212,6 +358,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     if not args.command:
+        if getattr(sys, "frozen", False) or (sys.stdin and sys.stdin.isatty()):
+            return run_interactive_menu(parser)
         print_banner()
         parser.print_help()
         return 0
