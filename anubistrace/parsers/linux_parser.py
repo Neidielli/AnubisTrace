@@ -73,7 +73,7 @@ class LinuxParser(BaseParser):
         re.IGNORECASE,
     )
     RE_USERADD = re.compile(
-        r"^(?P<time>[A-Za-z]{3}\s+\d+\s+\d+:\d+:\d+|\d{4}-\S+)\s+\S+\s+useradd\[\d+\]:\s+new\s+user:\s+name=(?P<new_user>\S+)",
+        r"^(?P<time>[A-Za-z]{3}\s+\d+\s+\d+:\d+:\d+|\d{4}-\S+)\s+\S+\s+useradd\[\d+\]:\s+new\s+user:\s+name=(?P<new_user>[^,\s]+)",
         re.IGNORECASE,
     )
 

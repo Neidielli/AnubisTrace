@@ -55,6 +55,7 @@ class Severity(str, Enum):
 class SourceType(str, Enum):
     """Artifact source origin."""
     EVTX_SECURITY = "EVTX_SECURITY"
+    EVTX_PROCESS = "EVTX_PROCESS"
     EVTX_SYSTEM = "EVTX_SYSTEM"
     EVTX_APPLICATION = "EVTX_APPLICATION"
     EVTX_POWERSHELL = "EVTX_POWERSHELL"

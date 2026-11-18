@@ -37,6 +37,10 @@ def build_binary() -> int:
         "--onefile",
         "--clean",
         "--name=anubis",
+        "--hidden-import=Evtx",
+        "--hidden-import=Evtx.Evtx",
+        "--hidden-import=yaml",
+        "--hidden-import=rich",
         data_arg,
         str(entry_point),
     ]

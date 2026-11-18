@@ -30,6 +30,28 @@ from anubistrace.reporters.terminal import render_attack_chains
 from anubistrace.triage import LiveCollector
 
 
+def _configure_console_encoding() -> None:
+    """Configures stdout/stderr to UTF-8 safely on Windows consoles (cp1252/cp850)."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
+
+def _resolve_rules_dir(rules_arg: str) -> Path:
+    """Resolves the rules directory, falling back to PyInstaller bundled rules if frozen."""
+    candidate = Path(rules_arg)
+    if candidate.exists():
+        return candidate
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        bundled = Path(getattr(sys, "_MEIPASS")) / "rules"
+        if bundled.exists():
+            return bundled
+    return candidate
+
+
 def print_banner() -> None:
     banner = f"""
     ╔═════════════════════════════════════════════════════════════════╗
@@ -44,7 +66,10 @@ def print_banner() -> None:
     ║  Author: Neidielli Rosado (@Neidielli) • MITRE ATT&CK Correlator ║
     ╚═════════════════════════════════════════════════════════════════╝
     """
-    print(banner)
+    try:
+        print(banner)
+    except UnicodeEncodeError:
+        print(f"\n=== {__app_name__} v{__version__} - Forensic Incident Triage & Timeline Engine ===\n")
 
 
 def execute_scan(
@@ -130,6 +155,7 @@ def execute_scan(
 
 
 def main(argv: Optional[List[str]] = None) -> int:
+    _configure_console_encoding()
     parser = argparse.ArgumentParser(
         prog="anubistrace",
         description=f"{__app_name__}: Fast Digital Forensics Triage & MITRE ATT&CK Timeline Correlator.",
@@ -200,7 +226,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return execute_scan(
             input_path=input_path,
             output_dir=Path(args.output),
-            rules_dir=Path(args.rules),
+            rules_dir=_resolve_rules_dir(args.rules),
             min_severity=args.min_severity,
             output_format=args.format,
         )
@@ -214,7 +240,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return execute_scan(
             input_path=out_path,
             output_dir=out_path / "analysis",
-            rules_dir=Path(args.rules),
+            rules_dir=_resolve_rules_dir(args.rules),
             min_severity="INFO",
             output_format=args.format,
         )

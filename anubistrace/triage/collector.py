@@ -131,8 +131,12 @@ class LiveCollector:
         for filename, cmd in commands:
             out_file = self.volatile_dir / filename
             try:
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=15)
-                output = result.stdout or result.stderr
+                result = subprocess.run(cmd, shell=True, capture_output=True, timeout=15)
+                raw_bytes = result.stdout or result.stderr or b""
+                try:
+                    output = raw_bytes.decode("utf-8")
+                except UnicodeDecodeError:
+                    output = raw_bytes.decode("cp850", errors="replace")
                 out_file.write_text(output, encoding="utf-8", errors="replace")
             except Exception as e:
                 logger.debug(f"Volatile command failed '{cmd}': {e}")

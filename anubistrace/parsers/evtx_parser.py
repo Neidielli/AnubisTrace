@@ -99,19 +99,25 @@ class EvtxParser(BaseParser):
         except Exception:
             return None
 
+    @staticmethod
+    def _find(parent: ET.Element, tag: str) -> Optional[ET.Element]:
+        """Finds child element checking both EVTX namespace and bare tag safely."""
+        found = parent.find(f"ns:{tag}", EVTX_NS)
+        if found is None:
+            found = parent.find(tag)
+        return found
+
     def _parse_event_element(self, elem: ET.Element, source_file: str) -> Optional[ForensicEvent]:
         """Converts an XML Event element into a normalized ForensicEvent."""
         # 1. System Headers
-        system = elem.find("ns:System", EVTX_NS)
-        if system is None:
-            system = elem.find("System")
+        system = self._find(elem, "System")
         if system is None:
             return None
 
-        event_id_elem = system.find("ns:EventID", EVTX_NS) or system.find("EventID")
+        event_id_elem = self._find(system, "EventID")
         event_id = event_id_elem.text.strip() if (event_id_elem is not None and event_id_elem.text) else "0"
 
-        time_elem = system.find("ns:TimeCreated", EVTX_NS) or system.find("TimeCreated")
+        time_elem = self._find(system, "TimeCreated")
         time_str = time_elem.get("SystemTime") if time_elem is not None else None
 
         if time_str:
@@ -123,7 +129,7 @@ class EvtxParser(BaseParser):
         else:
             timestamp = datetime.now(timezone.utc)
 
-        channel_elem = system.find("ns:Channel", EVTX_NS) or system.find("Channel")
+        channel_elem = self._find(system, "Channel")
         channel = channel_elem.text.strip() if (channel_elem is not None and channel_elem.text) else "Security"
 
         # Determine source type
@@ -217,10 +223,11 @@ class EvtxParser(BaseParser):
     def _extract_event_data(self, elem: ET.Element) -> Dict[str, str]:
         """Extracts key-value pairs from EventData or UserData XML."""
         data_map: Dict[str, str] = {}
-        event_data = elem.find("ns:EventData", EVTX_NS) or elem.find("EventData")
+        event_data = self._find(elem, "EventData")
 
         if event_data is not None:
-            for item in event_data.findall("ns:Data", EVTX_NS) or event_data.findall("Data"):
+            items = event_data.findall("ns:Data", EVTX_NS) or event_data.findall("Data")
+            for item in items:
                 name = item.get("Name")
                 text = item.text or ""
                 if name:
